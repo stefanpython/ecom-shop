@@ -60,9 +60,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const updatedCart = await addToCartApi(productId, quantity);
       setCart(updatedCart);
       toast.success("Item added to cart");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(
-        error.response?.data?.message || "Failed to add item to cart"
+        error instanceof Error ? error.message : "Failed to add item to cart"
       );
       console.error("Failed to add to cart:", error);
     } finally {
@@ -76,8 +76,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const updatedCart = await updateCartItem(itemId, quantity);
       setCart(updatedCart);
       toast.success("Cart updated");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to update cart");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update cart"
+      );
       console.error("Failed to update cart item:", error);
     } finally {
       setLoading(false);
@@ -90,8 +92,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const updatedCart = await removeCartItem(itemId);
       setCart(updatedCart);
       toast.success("Item removed from cart");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to remove item");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to remove item"
+      );
       console.error("Failed to remove cart item:", error);
     } finally {
       setLoading(false);
@@ -104,8 +108,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       await clearCart();
       setCart(null);
       toast.success("Cart cleared");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to clear cart");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to clear cart"
+      );
       console.error("Failed to clear cart:", error);
     } finally {
       setLoading(false);
