@@ -28,3 +28,23 @@ export const payOrder = async (
   const response = await api.put(`/orders/${orderId}/pay`, paymentResult);
   return response.data;
 };
+
+export const updateOrderToDelivered = async (
+  orderId: string
+): Promise<Order> => {
+  const response = await api.put(`/orders/${orderId}/deliver`);
+  return response.data;
+};
+
+export const updateOrderStatus = async (
+  orderId: string,
+  status: string
+): Promise<Order> => {
+  const response = await api.put(`/orders/${orderId}/status`, { status });
+  return response.data;
+};
+
+export const getOrders = async (): Promise<Order[]> => {
+  const response = await api.get("/orders");
+  return response.data;
+};
