@@ -93,8 +93,13 @@ const CheckoutPage = () => {
       setSelectedAddress(createdAddress._id);
       setShowAddressForm(false);
       toast.success("Address added successfully");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to add address");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        toast.error(err.response?.data?.message || "Failed to add address");
+      } else {
+        toast.error("Failed to add address");
+      }
     }
   };
 
@@ -144,8 +149,13 @@ const CheckoutPage = () => {
       // Redirect to order confirmation
       navigate(`/orders/${order._id}`);
       toast.success("Order placed successfully!");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to place order");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        toast.error(err.response?.data?.message || "Failed to place order");
+      } else {
+        toast.error("Failed to place order");
+      }
     } finally {
       setProcessingOrder(false);
     }
