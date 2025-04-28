@@ -117,6 +117,23 @@ export interface Order {
   createdAt: string;
 }
 
+export interface CreateOrderPayload {
+  orderItems: Array<{
+    product: string;
+    name: string;
+    quantity: number;
+    image: string;
+    price: number;
+    attributes?: Record<string, string | number | boolean | null>;
+  }>;
+  shippingAddress: string;
+  billingAddress: string;
+  paymentMethod: string;
+  taxPrice: number;
+  shippingPrice: number;
+  totalPrice: number;
+}
+
 // Review types
 export interface Review {
   _id: string;
