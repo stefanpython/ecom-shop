@@ -95,7 +95,9 @@ export interface OrderItem {
 
 export interface Order {
   _id: string;
-  user: string;
+  user: {
+    email: string;
+  };
   orderItems: OrderItem[];
   shippingAddress: Address;
   billingAddress: Address;
