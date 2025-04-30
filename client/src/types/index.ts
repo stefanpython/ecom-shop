@@ -164,3 +164,13 @@ export interface CreateOrderDto {
   shippingPrice: number;
   totalPrice: number;
 }
+
+export interface ProductQueryParams {
+  pageNumber: number;
+  keyword?: string;
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
+  sortBy?: string;
+  sortOrder?: string;
+}
