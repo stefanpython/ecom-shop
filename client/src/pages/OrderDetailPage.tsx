@@ -251,7 +251,10 @@ const OrderDetailPage = () => {
                 </span>
               </div>
               <div className="text-sm text-gray-600">
-                Order placed on {new Date(order.createdAt).toLocaleDateString()}
+                Order placed on{" "}
+                {order.createdAt
+                  ? new Date(order.createdAt).toLocaleDateString()
+                  : "Unknown date"}
               </div>
             </div>
           </div>
