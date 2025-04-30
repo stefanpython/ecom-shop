@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
 import type React from "react";
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getProducts } from "../api/products";
@@ -12,6 +9,16 @@ import type { Product, Category, ProductsResponse } from "../types";
 import ProductCard from "../components/ProductCard";
 import Loader from "../components/Loader";
 import { Filter, Search, ChevronLeft, ChevronRight } from "lucide-react";
+
+type ProductQueryParams = {
+  pageNumber: number;
+  keyword?: string;
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
+  sortBy?: string;
+  sortOrder?: "desc" | "asc";
+};
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -63,7 +70,7 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const params: any = {
+        const params: ProductQueryParams = {
           pageNumber: currentPage,
         };
 
@@ -72,7 +79,9 @@ const ProductsPage = () => {
         if (minPrice !== undefined) params.priceMin = minPrice;
         if (maxPrice !== undefined) params.priceMax = maxPrice;
         if (sortBy) params.sortBy = sortBy;
-        if (sortOrder) params.sortOrder = sortOrder;
+        if (sortOrder && (sortOrder === "desc" || sortOrder === "asc")) {
+          params.sortOrder = sortOrder;
+        }
 
         const data: ProductsResponse = await getProducts(params);
         setProducts(data.products);
@@ -118,7 +127,14 @@ const ProductsPage = () => {
     updateFilters({ sortBy: by, sortOrder: order });
   };
 
-  const updateFilters = (newFilters: Record<string, any>) => {
+  const updateFilters = (newFilters: {
+    keyword?: string;
+    category?: string;
+    priceMin?: number;
+    priceMax?: number;
+    sortBy?: string;
+    sortOrder?: string;
+  }) => {
     const params = new URLSearchParams(searchParams);
 
     // Reset to page 1 when filters change
