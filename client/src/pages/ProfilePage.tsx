@@ -231,7 +231,9 @@ const ProfilePage = () => {
                         </div>
                         <div className="text-sm text-gray-600">
                           Placed on{" "}
-                          {new Date(order.createdAt).toLocaleDateString()}
+                          {order.createdAt
+                            ? new Date(order.createdAt).toLocaleDateString()
+                            : "N/A"}
                         </div>
                       </div>
                       <div>
