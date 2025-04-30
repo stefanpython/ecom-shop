@@ -113,11 +113,11 @@ export interface Order {
   totalPrice: number;
   isPaid: boolean;
   paidAt?: string;
-  isDelivered: boolean;
+  isDelivered?: boolean;
   deliveredAt?: string;
-  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
+  status?: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
   trackingNumber?: string;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface CreateOrderPayload {
@@ -146,4 +146,21 @@ export interface Review {
   title: string;
   comment: string;
   createdAt: string;
+}
+
+export interface CreateOrderDto {
+  orderItems: {
+    product: string;
+    name: string;
+    quantity: number;
+    image: string;
+    price: number;
+    attributes: Record<string, string | number | boolean | null>;
+  }[];
+  shippingAddress: string;
+  billingAddress: string;
+  paymentMethod: string;
+  taxPrice: number;
+  shippingPrice: number;
+  totalPrice: number;
 }

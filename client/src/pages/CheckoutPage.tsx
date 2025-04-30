@@ -114,27 +114,24 @@ const CheckoutPage = () => {
     setProcessingOrder(true);
 
     try {
-      // Calculate order totals
-      const taxRate = 0.1; // 10% tax
-      const shippingPrice = cart.totalPrice > 100 ? 0 : 10; // Free shipping over $100
+      const taxRate = 0.1;
+      const shippingPrice = cart.totalPrice > 100 ? 0 : 10;
       const taxPrice = cart.totalPrice * taxRate;
       const totalPrice = cart.totalPrice + taxPrice + shippingPrice;
 
-      // Prepare order items
       const orderItems = cart.items.map((item) => ({
         product: item.product._id,
         name: item.product.name,
         quantity: item.quantity,
         image: item.product.images[0] || "",
         price: item.price,
-        attributes: item.attributes,
+        attributes: item.attributes || {},
       }));
 
-      // Create order
       const orderData = {
         orderItems,
         shippingAddress: selectedAddress,
-        billingAddress: selectedAddress, // Using same address for billing
+        billingAddress: selectedAddress,
         paymentMethod,
         taxPrice,
         shippingPrice,
@@ -142,11 +139,7 @@ const CheckoutPage = () => {
       };
 
       const order = await createOrder(orderData);
-
-      // Clear cart after successful order
       await clearCartItems();
-
-      // Redirect to order confirmation
       navigate(`/orders/${order._id}`);
       toast.success("Order placed successfully!");
     } catch (error: unknown) {

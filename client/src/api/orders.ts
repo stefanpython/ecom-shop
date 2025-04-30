@@ -1,7 +1,9 @@
 import api from "./index";
-import type { Order } from "../types";
+import type { Order, CreateOrderDto } from "../types";
 
-export const createOrder = async (orderData: Order): Promise<Order> => {
+export const createOrder = async (
+  orderData: CreateOrderDto
+): Promise<Order> => {
   const response = await api.post("/orders", orderData);
   return response.data;
 };
