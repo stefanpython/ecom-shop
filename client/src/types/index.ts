@@ -51,6 +51,8 @@ export interface Category {
   name: string;
   description?: string;
   image?: string;
+  parent?: Category | string;
+  isActive?: boolean;
 }
 
 // Cart types
