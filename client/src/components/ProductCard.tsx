@@ -27,7 +27,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        {product.discountPercentage > 0 && (
+        {(product.discountPercentage ?? 0) > 0 && (
           <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
             {product.discountPercentage}% OFF
           </div>
