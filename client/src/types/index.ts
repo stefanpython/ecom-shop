@@ -27,7 +27,7 @@ export interface Product {
   richDescription?: string;
   images: string[];
   price: number;
-  category: Category;
+  category: Category | string;
   countInStock: number;
   rating: number;
   numReviews: number;
@@ -35,6 +35,7 @@ export interface Product {
   brand?: string;
   discountPrice?: number;
   discountPercentage?: number;
+  attributes: Record<string, string | number | boolean | null>;
 }
 
 export interface ProductsResponse {
