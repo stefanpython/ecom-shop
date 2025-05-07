@@ -6,6 +6,7 @@ export interface User {
   isAdmin: boolean;
   token?: string;
   phone?: string;
+  createdAt: string;
 }
 
 export interface LoginCredentials {
