@@ -183,3 +183,15 @@ export interface ProductQueryParams {
   sortBy?: string;
   sortOrder?: string;
 }
+
+export interface Payment {
+  _id: string;
+  transactionId?: string;
+  user: string | { name: string };
+  order: string | { _id: string; totalPrice: number };
+  amount: number;
+  currency: string;
+  paymentMethod: string;
+  status: string;
+  createdAt?: string;
+}
