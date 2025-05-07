@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useState } from "react";
-import { ShoppingCart, User, Menu, X } from "lucide-react";
+import { ShoppingCart, User, Menu, X, LayoutDashboard } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -66,6 +66,15 @@ const Navbar = () => {
                   >
                     Orders
                   </Link>
+                  {user?.isAdmin && (
+                    <Link
+                      to="/admin"
+                      className=" px-4 py-2 hover:bg-gray-100 flex items-center"
+                    >
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
@@ -142,6 +151,15 @@ const Navbar = () => {
                 >
                   Orders
                 </Link>
+                {user?.isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="block px-3 py-2 hover:bg-gray-100"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={() => {
                     handleLogout();
