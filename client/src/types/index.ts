@@ -140,15 +140,22 @@ export interface CreateOrderPayload {
 }
 
 // Review types
-export interface Review {
+export type Review = {
   _id: string;
-  user: User;
-  product: string;
-  rating: number;
   title: string;
   comment: string;
+  rating: number;
+  isApproved: boolean;
+  user: {
+    name: string;
+  };
+  product:
+    | string
+    | {
+        name: string;
+      };
   createdAt: string;
-}
+};
 
 export interface CreateOrderDto {
   orderItems: {
