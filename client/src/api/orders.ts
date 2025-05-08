@@ -48,5 +48,5 @@ export const updateOrderStatus = async (
 
 export const getOrders = async (): Promise<Order[]> => {
   const response = await api.get("/orders");
-  return response.data;
+  return response.data.orders;
 };
