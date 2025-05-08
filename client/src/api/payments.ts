@@ -18,7 +18,7 @@ export const createPayment = async (paymentData: {
   currency?: string;
   status: string;
   transactionId?: string;
-  paymentDetails?: any;
+  paymentDetails?: Record<string, unknown>;
 }): Promise<Payment> => {
   const response = await api.post("/payments", paymentData);
   return response.data;
