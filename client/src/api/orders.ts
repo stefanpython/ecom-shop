@@ -24,7 +24,9 @@ export const payOrder = async (
     id: string;
     status: string;
     update_time: string;
-    email_address: string;
+    payer: {
+      email_address: string;
+    };
   }
 ): Promise<Order> => {
   const response = await api.put(`/orders/${orderId}/pay`, paymentResult);
