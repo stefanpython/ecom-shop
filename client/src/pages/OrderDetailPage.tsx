@@ -44,15 +44,17 @@ const OrderDetailPage = () => {
 
     setPaymentLoading(true);
     try {
-      // Simulate payment process
+      // Create payment data that matches backend expectations
       const paymentResult = {
         id: `PAY-${Date.now()}`,
         status: "COMPLETED",
         update_time: new Date().toISOString(),
-        email_address:
-          typeof order.user === "object"
-            ? order.user.email
-            : "customer@example.com",
+        payer: {
+          email_address:
+            typeof order.user === "object"
+              ? order.user.email
+              : "customer@example.com",
+        },
       };
 
       await payOrder(id, paymentResult);
