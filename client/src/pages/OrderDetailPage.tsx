@@ -49,7 +49,10 @@ const OrderDetailPage = () => {
         id: `PAY-${Date.now()}`,
         status: "COMPLETED",
         update_time: new Date().toISOString(),
-        email_address: order.user.email || "customer@example.com",
+        email_address:
+          typeof order.user === "object"
+            ? order.user.email
+            : "customer@example.com",
       };
 
       await payOrder(id, paymentResult);
