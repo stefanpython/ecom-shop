@@ -35,5 +35,5 @@ export const updatePaymentStatus = async (
 
 export const getAllPayments = async (): Promise<Payment[]> => {
   const response = await api.get("/payments/admin");
-  return response.data;
+  return response.data.payments;
 };
