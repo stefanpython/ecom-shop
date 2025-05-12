@@ -214,10 +214,16 @@ const ProductDetailPage = () => {
             <div className="flex items-center">
               <span className="text-gray-700 w-24">Category:</span>
               <Link
-                to={`/products?category=${product.category._id}`}
+                to={`/products?category=${
+                  typeof product.category === "object"
+                    ? product.category._id
+                    : product.category
+                }`}
                 className="text-blue-600 hover:underline"
               >
-                {product.category.name}
+                {typeof product.category === "object"
+                  ? product.category.name
+                  : product.category}
               </Link>
             </div>
           </div>
