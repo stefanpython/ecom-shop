@@ -39,8 +39,8 @@ const createCategory = asyncHandler(async (req, res) => {
     throw new Error("Category with this name already exists");
   }
 
-  // Check if parent category exists if provided
-  if (parent) {
+  // Only validate parent if it's provided and not empty
+  if (parent && parent.trim() !== "") {
     const parentExists = await Category.findById(parent);
     if (!parentExists) {
       res.status(400);
@@ -53,7 +53,7 @@ const createCategory = asyncHandler(async (req, res) => {
     description,
     slug,
     image,
-    parent,
+    parent: parent && parent.trim() !== "" ? parent : undefined, // Only set parent if it exists
   });
 
   if (category) {
