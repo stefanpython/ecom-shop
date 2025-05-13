@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Category = require("../models/categoryModel");
+const Product = require("../models/productModel");
+const mongoose = require("mongoose");
 
 // @desc    Fetch all categories
 // @route   GET /api/categories
@@ -103,15 +105,44 @@ const updateCategory = asyncHandler(async (req, res) => {
 // @desc    Delete a category
 // @route   DELETE /api/categories/:id
 // @access  Private/Admin
+// @desc    Delete a category
+// @route   DELETE /api/categories/:id
+// @access  Private/Admin
 const deleteCategory = asyncHandler(async (req, res) => {
-  const category = await Category.findById(req.params.id);
+  try {
+    const { id } = req.params;
 
-  if (category) {
-    await category.remove();
-    res.json({ message: "Category removed" });
-  } else {
-    res.status(404);
-    throw new Error("Category not found");
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+
+    const category = await Category.findById(id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    const childCategories = await Category.find({ parent: id });
+    if (childCategories.length > 0) {
+      return res.status(400).json({
+        message:
+          "Cannot delete category: It has subcategories. Delete or reassign them first.",
+      });
+    }
+
+    const productsWithCategory = await Product.find({ category: id });
+    if (productsWithCategory.length > 0) {
+      return res.status(400).json({
+        message: "Cannot delete category: It is assigned to products.",
+      });
+    }
+
+    await Category.deleteOne({ _id: id });
+    return res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteCategory:", error);
+    return res.status(500).json({
+      message: "An unexpected error occurred while deleting the category",
+    });
   }
 });
 
