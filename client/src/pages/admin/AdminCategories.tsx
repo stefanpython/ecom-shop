@@ -35,9 +35,26 @@ const AdminCategories = () => {
         await deleteCategory(id);
         setCategories(categories.filter((category) => category._id !== id));
         toast.success("Category deleted successfully");
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error deleting category:", error);
-        toast.error("Failed to delete category");
+
+        // Show specific error message if available
+        if (
+          error &&
+          typeof error === "object" &&
+          "response" in error &&
+          error.response &&
+          typeof error.response === "object" &&
+          "data" in error.response &&
+          error.response.data &&
+          typeof error.response.data === "object" &&
+          "message" in error.response.data &&
+          typeof error.response.data.message === "string"
+        ) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error("Failed to delete category");
+        }
       }
     }
   };
