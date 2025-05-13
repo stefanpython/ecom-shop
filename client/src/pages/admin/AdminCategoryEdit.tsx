@@ -85,11 +85,17 @@ const AdminCategoryEdit = () => {
     setSubmitting(true);
 
     try {
+      // Create a copy of formData and clean it up
+      const dataToSend = { ...formData };
+      if (dataToSend.parent === "") {
+        delete dataToSend.parent; // Remove parent if it's an empty string
+      }
+
       if (isEditMode && id) {
-        await updateCategory(id, formData);
+        await updateCategory(id, dataToSend);
         toast.success("Category updated successfully");
       } else {
-        await createCategory(formData);
+        await createCategory(dataToSend);
         toast.success("Category created successfully");
       }
       navigate("/admin/categories");
