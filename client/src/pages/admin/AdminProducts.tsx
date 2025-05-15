@@ -58,9 +58,13 @@ const AdminProducts = () => {
         await deleteProduct(id);
         setProducts(products.filter((product) => product._id !== id));
         toast.success("Product deleted successfully");
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        toast.error("Failed to delete product");
+      } catch (error: any) {
+        console.error("Full error object:", error);
+        if (error.response?.data?.message) {
+          toast.error(`Deletion failed: ${error.response.data.message}`);
+        } else {
+          toast.error("Failed to delete product. Check console for details.");
+        }
       }
     }
   };
