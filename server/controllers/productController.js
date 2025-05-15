@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const Product = require("../models/productModel");
 const Category = require("../models/categoryModel");
 const Review = require("../models/reviewModel");
+const Order = require("../models/orderModel");
+const User = require("../models/userModel");
 
 // @desc    Fetch all products
 // @route   GET /api/products
@@ -203,15 +205,43 @@ const updateProduct = asyncHandler(async (req, res) => {
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
 const deleteProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const { id } = req.params;
 
-  if (product) {
-    await product.remove();
-    res.json({ message: "Product removed" });
-  } else {
-    res.status(404);
-    throw new Error("Product not found");
+  // 1. Check if product exists
+  const product = await Product.findById(id);
+  if (!product) {
+    return res.status(404).json({
+      message: "Product not found",
+    });
   }
+
+  // 2. Check if product is in any orders
+  const ordersWithProduct = await Order.countDocuments({
+    "orderItems.product": id,
+  });
+  if (ordersWithProduct > 0) {
+    return res.status(400).json({
+      message: "Cannot delete: Product is in existing orders.",
+    });
+  }
+
+  // 3. Check if product is in any user's cart/wishlist
+  const usersWithProduct = await User.countDocuments({
+    $or: [{ "cart.items.product": id }, { "wishlist.items.product": id }],
+  });
+  if (usersWithProduct > 0) {
+    return res.status(400).json({
+      message: "Cannot delete: Product is in user carts/wishlists.",
+    });
+  }
+
+  // 4. Delete the product (modern Mongoose way)
+  await Product.deleteOne({ _id: id });
+
+  res.status(200).json({
+    success: true,
+    message: "Product deleted successfully.",
+  });
 });
 
 // @desc    Create new review
