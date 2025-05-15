@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const Order = require("../models/orderModel");
+const Review = require("../models/reviewModel");
 
 // Generate JWT
 const generateToken = (id) => {
@@ -205,12 +206,14 @@ const deleteUser = asyncHandler(async (req, res) => {
     });
   }
 
+  // Anonymize reviews after user deletion
+  await Review.updateMany(
+    { user: id },
+    { $set: { user: "Annonymus", username: "Deleted User" } }
+  );
+
   // 4. Delete user (modern Mongoose way)
   await User.deleteOne({ _id: id });
-
-  // 5. Cleanup (optional)
-  // - Remove user avatar from storage if exists
-  // - Remove any user-related data
 
   res.status(200).json({
     success: true,
