@@ -10,6 +10,7 @@ import type { Product, Category } from "../../types";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
 import { Edit, Trash2, Plus, Search } from "lucide-react";
+import { AxiosError } from "axios";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -58,10 +59,14 @@ const AdminProducts = () => {
         await deleteProduct(id);
         setProducts(products.filter((product) => product._id !== id));
         toast.success("Product deleted successfully");
-      } catch (error: any) {
-        console.error("Full error object:", error);
-        if (error.response?.data?.message) {
-          toast.error(`Deletion failed: ${error.response.data.message}`);
+      } catch (error) {
+        console.error("Error:", error);
+        if (error instanceof AxiosError) {
+          toast.error(
+            `Deletion failed: ${error.response?.data?.message || error.message}`
+          );
+        } else if (error instanceof Error) {
+          toast.error(`Deletion failed: ${error.message}`);
         } else {
           toast.error("Failed to delete product. Check console for details.");
         }
