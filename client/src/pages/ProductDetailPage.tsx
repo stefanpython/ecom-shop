@@ -385,7 +385,7 @@ const ProductDetailPage = () => {
                     <div className="flex items-center mt-1">
                       <Rating value={review.rating} />
                       <span className="ml-2 text-sm text-gray-500">
-                        by {review.user.name}
+                        by {review.user?.name}
                       </span>
                     </div>
                   </div>
