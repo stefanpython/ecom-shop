@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
+const Order = require("../models/orderModel");
 
 // Generate JWT
 const generateToken = (id) => {
@@ -178,15 +179,43 @@ const updateUser = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const { id } = req.params;
 
-  if (user) {
-    await user.remove();
-    res.json({ message: "User removed" });
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+  // 1. Check if user exists
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
   }
+
+  // 2. Check if user has any orders
+  const userOrders = await Order.countDocuments({ user: id });
+  if (userOrders > 0) {
+    return res.status(400).json({
+      message:
+        "Cannot delete user: User has existing orders. Delete orders first.",
+    });
+  }
+
+  // 3. Check if user is admin (optional: prevent deleting admins)
+  if (user.role === "admin") {
+    return res.status(403).json({
+      message: "Cannot delete admin users",
+    });
+  }
+
+  // 4. Delete user (modern Mongoose way)
+  await User.deleteOne({ _id: id });
+
+  // 5. Cleanup (optional)
+  // - Remove user avatar from storage if exists
+  // - Remove any user-related data
+
+  res.status(200).json({
+    success: true,
+    message: "User deleted successfully",
+  });
 });
 
 module.exports = {
