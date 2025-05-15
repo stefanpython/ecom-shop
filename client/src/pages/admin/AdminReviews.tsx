@@ -201,7 +201,7 @@ const AdminReviews = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {review.user.name}
+                        {review.user?.name}
                       </div>
                       <div className="text-xs text-gray-500">
                         {new Date(review.createdAt).toLocaleDateString()}
