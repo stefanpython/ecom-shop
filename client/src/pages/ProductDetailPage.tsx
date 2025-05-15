@@ -384,8 +384,11 @@ const ProductDetailPage = () => {
                     <h4 className="font-semibold">{review.title}</h4>
                     <div className="flex items-center mt-1">
                       <Rating value={review.rating} />
-                      <span className="ml-2 text-sm text-gray-500">
-                        by {review.user?.name}
+                      <span className="ml-2 text-sm text-gray-500 flex">
+                        by
+                        <span className="ml-1 font-medium">
+                          {review.user?.name || "Anonymous"}
+                        </span>
                       </span>
                     </div>
                   </div>
