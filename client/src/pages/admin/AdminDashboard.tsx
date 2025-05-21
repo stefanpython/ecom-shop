@@ -56,9 +56,10 @@ const AdminDashboard = () => {
     // Check server status - use the base URL without appending /api
     try {
       // Use the base URL from your API configuration
-      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-      const serverResponse = await fetch(`${baseUrl}`, {
-        method: "HEAD",
+      const baseUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const serverResponse = await fetch(`${baseUrl}/ping`, {
+        method: "GET",
         cache: "no-cache",
       });
 
