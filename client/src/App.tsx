@@ -24,6 +24,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminUserEdit from "./pages/admin/AdminUserEdit";
 import AdminReviews from "./pages/admin/AdminReviews";
 import AdminPayments from "./pages/admin/AdminPayments";
+import AdminPaymentDetail from "./pages/admin/AdminPaymentDetail";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
             <Route path="users/:id" element={<AdminUserEdit />} />
             <Route path="reviews" element={<AdminReviews />} />
             <Route path="payments" element={<AdminPayments />} />
+            <Route path="payments/:id" element={<AdminPaymentDetail />} />
           </Route>
         </Route>
       </Routes>
