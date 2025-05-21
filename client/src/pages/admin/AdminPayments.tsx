@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { getAllPayments } from "../../api/payments";
 import type { Payment } from "../../types";
 import Loader from "../../components/Loader";
@@ -215,16 +216,13 @@ const AdminPayments = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          // View payment details (modal or navigate to detail page)
-                          toast("Payment details view not implemented");
-                        }}
+                      <Link
+                        to={`/admin/payments/${payment._id}`}
                         className="text-blue-600 hover:text-blue-900"
                         title="View Details"
                       >
                         <Eye className="h-5 w-5" />
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))
