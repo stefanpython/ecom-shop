@@ -130,40 +130,44 @@ const updateReview = asyncHandler(async (req, res) => {
 // @route   DELETE /api/reviews/:id
 // @access  Private
 const deleteReview = asyncHandler(async (req, res) => {
-  const review = await Review.findById(req.params.id);
+  const { id } = req.params;
 
-  if (review) {
-    // Check if review belongs to user or user is admin
-    if (
-      review.user.toString() !== req.user._id.toString() &&
-      !req.user.isAdmin
-    ) {
-      res.status(401);
-      throw new Error("Not authorized");
-    }
-
-    await review.remove();
-
-    // Update product rating
-    const product = await Product.findById(review.product);
-    const reviews = await Review.find({ product: review.product });
-
-    if (reviews.length > 0) {
-      product.numReviews = reviews.length;
-      product.rating =
-        reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
-    } else {
-      product.numReviews = 0;
-      product.rating = 0;
-    }
-
-    await product.save();
-
-    res.json({ message: "Review removed" });
-  } else {
+  // 1. Check if the review exists
+  const review = await Review.findById(id);
+  if (!review) {
     res.status(404);
     throw new Error("Review not found");
   }
+
+  // 2. Check if the user owns the review or is an admin
+  if (review.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+    res.status(401);
+    throw new Error("Not authorized");
+  }
+
+  // 3. Delete the review
+  await Review.deleteOne({ _id: id });
+
+  // 4. Update the product's rating
+  const product = await Product.findById(review.product);
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  const reviews = await Review.find({ product: review.product });
+  product.numReviews = reviews.length;
+
+  if (reviews.length > 0) {
+    product.rating =
+      reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
+  } else {
+    product.rating = 0;
+  }
+
+  await product.save();
+
+  res.status(200).json({ message: "Review deleted successfully" });
 });
 
 // @desc    Approve a review

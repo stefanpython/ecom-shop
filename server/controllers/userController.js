@@ -209,7 +209,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   // Anonymize reviews after user deletion
   await Review.updateMany(
     { user: id },
-    { $set: { user: "Annonymus", username: "Deleted User" } }
+    { $set: { user: null, username: "Deleted User" } }
   );
 
   // 4. Delete user (modern Mongoose way)
