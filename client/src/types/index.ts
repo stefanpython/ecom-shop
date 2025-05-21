@@ -185,6 +185,7 @@ export interface ProductQueryParams {
 }
 
 export interface Payment {
+  paymentDetails?: Record<string, string | number | boolean | null>;
   _id: string;
   transactionId?: string;
   user: string | { name: string };
