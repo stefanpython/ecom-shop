@@ -6,6 +6,7 @@ import { getProducts } from "../../api/products";
 import { getOrders } from "../../api/orders";
 import { getUsers } from "../../api/users";
 import { getCategories } from "../../api/categories";
+import api from "../../api/index";
 import {
   Package,
   ShoppingBag,
@@ -13,6 +14,7 @@ import {
   Tag,
   DollarSign,
   TrendingUp,
+  RefreshCw,
 } from "lucide-react";
 import Loader from "../../components/Loader";
 
@@ -27,9 +29,99 @@ const AdminDashboard = () => {
     pendingOrders: 0,
   });
 
+  // System status states
+  const [systemStatus, setSystemStatus] = useState({
+    server: { status: "Checking...", color: "bg-yellow-100 text-yellow-800" },
+    database: { status: "Checking...", color: "bg-yellow-100 text-yellow-800" },
+    api: { status: "Checking...", color: "bg-yellow-100 text-yellow-800" },
+  });
+
+  const [refreshingStatus, setRefreshingStatus] = useState(false);
+  const [lastChecked, setLastChecked] = useState(new Date());
+
+  // Function to check system status
+  const checkSystemStatus = async () => {
+    setRefreshingStatus(true);
+
+    // Reset status to checking
+    setSystemStatus({
+      server: { status: "Checking...", color: "bg-yellow-100 text-yellow-800" },
+      database: {
+        status: "Checking...",
+        color: "bg-yellow-100 text-yellow-800",
+      },
+      api: { status: "Checking...", color: "bg-yellow-100 text-yellow-800" },
+    });
+
+    // Check server status - use the base URL without appending /api
+    try {
+      // Use the base URL from your API configuration
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const serverResponse = await fetch(`${baseUrl}`, {
+        method: "HEAD",
+        cache: "no-cache",
+      });
+
+      setSystemStatus((prev) => ({
+        ...prev,
+        server: {
+          status: serverResponse.ok ? "Online" : "Offline",
+          color: serverResponse.ok
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800",
+        },
+      }));
+    } catch (error) {
+      console.error("Server check failed:", error);
+      setSystemStatus((prev) => ({
+        ...prev,
+        server: { status: "Offline", color: "bg-red-100 text-red-800" },
+      }));
+    }
+
+    // Check API status
+    try {
+      const apiResponse = await api.get("/products?limit=1");
+      setSystemStatus((prev) => ({
+        ...prev,
+        api: {
+          status: apiResponse.status === 200 ? "Operational" : "Degraded",
+          color:
+            apiResponse.status === 200
+              ? "bg-green-100 text-green-800"
+              : "bg-orange-100 text-orange-800",
+        },
+      }));
+
+      // If API is operational, database is likely connected
+      setSystemStatus((prev) => ({
+        ...prev,
+        database: {
+          status: "Connected",
+          color: "bg-green-100 text-green-800",
+        },
+      }));
+    } catch (error) {
+      console.error("API check failed:", error);
+      setSystemStatus((prev) => ({
+        ...prev,
+        api: { status: "Down", color: "bg-red-100 text-red-800" },
+        database: { status: "Error", color: "bg-red-100 text-red-800" },
+      }));
+    }
+
+    setLastChecked(new Date());
+    setRefreshingStatus(false);
+  };
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
+      let dbStatus = {
+        status: "Connected",
+        color: "bg-green-100 text-green-800",
+      };
+
       try {
         const [products, orders, users, categories] = await Promise.all([
           getProducts(),
@@ -61,12 +153,25 @@ const AdminDashboard = () => {
         });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+        dbStatus = { status: "Error", color: "bg-red-100 text-red-800" };
       } finally {
         setLoading(false);
+
+        // Update database status based on data fetch success
+        setSystemStatus((prev) => ({
+          ...prev,
+          database: dbStatus,
+        }));
       }
     };
 
     fetchDashboardData();
+    checkSystemStatus();
+
+    // Set up interval to refresh system status every 60 seconds
+    const statusInterval = setInterval(checkSystemStatus, 60000);
+
+    return () => clearInterval(statusInterval);
   }, []);
 
   if (loading) return <Loader />;
@@ -124,8 +229,7 @@ const AdminDashboard = () => {
         {statCards.map((card, index) => (
           <Link key={index} to={card.link} className="block">
             <div
-              className={`${card.color} rounded-lg shadow-  to={card.link} className="block">
-            <div className={\`${card.color} rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow`}
+              className={`${card.color} rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow`}
             >
               <div className="flex justify-between items-center">
                 <div>
@@ -165,25 +269,46 @@ const AdminDashboard = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold mb-4">System Status</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">System Status</h2>
+            <button
+              onClick={checkSystemStatus}
+              disabled={refreshingStatus}
+              className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+              title="Refresh Status"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${refreshingStatus ? "animate-spin" : ""}`}
+              />
+            </button>
+          </div>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <span>Server Status</span>
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                Online
+              <span
+                className={`px-2 py-1 ${systemStatus.server.color} rounded-full text-xs`}
+              >
+                {systemStatus.server.status}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span>Database</span>
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                Connected
+              <span
+                className={`px-2 py-1 ${systemStatus.database.color} rounded-full text-xs`}
+              >
+                {systemStatus.database.status}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span>API</span>
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                Operational
+              <span
+                className={`px-2 py-1 ${systemStatus.api.color} rounded-full text-xs`}
+              >
+                {systemStatus.api.status}
               </span>
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
+              Last checked: {lastChecked.toLocaleTimeString()}
             </div>
           </div>
         </div>
