@@ -78,6 +78,7 @@ const ProductDetailPage = () => {
 
     setReviewSubmitting(true);
     try {
+      // 1. Submit the new review
       await createReview({
         product: id,
         rating,
@@ -85,26 +86,71 @@ const ProductDetailPage = () => {
         comment,
       });
 
-      // Refresh reviews
-      const updatedReviews = await getReviews(id);
+      // 2. Calculate the new average rating
+      const newReview: Review = {
+        _id: "temp-id", // Temporary ID (will be replaced when fetched)
+        rating,
+        title,
+        comment,
+        user: { name: "You" }, // Placeholder
+        createdAt: new Date().toISOString(),
+        isApproved: false,
+        product: id,
+      };
+
+      // 3. Update reviews list IMMEDIATELY (optimistic UI)
+      const updatedReviews = [...reviews, newReview];
       setReviews(updatedReviews);
 
-      // Reset form
+      // 4. Update product rating IMMEDIATELY
+      const newRating =
+        updatedReviews.reduce((sum, review) => sum + review.rating, 0) /
+        updatedReviews.length;
+
+      if (product) {
+        setProduct({
+          ...product,
+          rating: newRating,
+          numReviews: updatedReviews.length,
+        });
+      }
+
+      // 5. Reset form
       setRating(5);
       setTitle("");
       setComment("");
       setShowReviewForm(false);
 
       toast.success("Review submitted successfully");
+
+      // 6. (Optional) Refetch reviews to get the actual data from the server
+      const serverReviews = await getReviews(id);
+      setReviews(serverReviews);
+
+      // Update product rating again with server data
+      if (serverReviews.length > 0 && product) {
+        const serverRating =
+          serverReviews.reduce((sum, review) => sum + review.rating, 0) /
+          serverReviews.length;
+
+        setProduct({
+          ...product,
+          rating: serverRating,
+          numReviews: serverReviews.length,
+        });
+      }
     } catch (error: Error | unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       console.error("Error submitting review:", error);
       toast.error(err.response?.data?.message || "Failed to submit review");
+
+      // Rollback optimistic updates on error
+      setReviews(reviews);
+      setProduct(product);
     } finally {
       setReviewSubmitting(false);
     }
   };
-
   if (loading) return <Loader />;
   if (!product)
     return <div className="text-center py-8">Product not found</div>;
