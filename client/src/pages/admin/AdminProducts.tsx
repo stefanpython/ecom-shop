@@ -74,8 +74,6 @@ const AdminProducts = () => {
     }
   };
 
-  if (loading) return <Loader />;
-
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -124,244 +122,253 @@ const AdminProducts = () => {
         </div>
       </div>
 
-      {/* Desktop Table (hidden on mobile) */}
-      <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Product
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Category
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Price
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Stock
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Status
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {products.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-4 text-center text-gray-500"
-                    >
-                      No products found
-                    </td>
-                  </tr>
-                ) : (
-                  products.map((product) => (
-                    <tr key={product._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            <img
-                              className="h-10 w-10 rounded-full object-cover"
-                              src={
-                                product.images[0] || "/placeholder-product.jpg"
-                              }
-                              alt={product.name}
-                            />
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {product.name}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              ID: {product._id.slice(-8)}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {typeof product.category === "object"
-                            ? product.category.name
-                            : "Unknown"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          ${product.price.toFixed(2)}
-                        </div>
-                        {product.discountPrice && (
-                          <div className="text-xs text-gray-500 line-through">
-                            ${product.discountPrice.toFixed(2)}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {product.countInStock}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            product.countInStock > 0
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
-                          {product.countInStock > 0
-                            ? "In Stock"
-                            : "Out of Stock"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end space-x-2">
-                          <Link
-                            to={`/admin/products/${product._id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                            title="Edit"
-                          >
-                            <Edit className="h-5 w-5" />
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(product._id)}
-                            className="text-red-600 hover:text-red-900"
-                            title="Delete"
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </td>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div>
+          {/* Desktop Table (hidden on mobile) */}
+          <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Product
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Category
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Price
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Stock
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Status
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Actions
+                      </th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {products.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="px-6 py-4 text-center text-gray-500"
+                        >
+                          No products found
+                        </td>
+                      </tr>
+                    ) : (
+                      products.map((product) => (
+                        <tr key={product._id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="h-10 w-10 flex-shrink-0">
+                                <img
+                                  className="h-10 w-10 rounded-full object-cover"
+                                  src={
+                                    product.images[0] ||
+                                    "/placeholder-product.jpg"
+                                  }
+                                  alt={product.name}
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {product.name}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  ID: {product._id.slice(-8)}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              {typeof product.category === "object"
+                                ? product.category.name
+                                : "Unknown"}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              ${product.price.toFixed(2)}
+                            </div>
+                            {product.discountPrice && (
+                              <div className="text-xs text-gray-500 line-through">
+                                ${product.discountPrice.toFixed(2)}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              {product.countInStock}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                product.countInStock > 0
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {product.countInStock > 0
+                                ? "In Stock"
+                                : "Out of Stock"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div className="flex justify-end space-x-2">
+                              <Link
+                                to={`/admin/products/${product._id}`}
+                                className="text-blue-600 hover:text-blue-900"
+                                title="Edit"
+                              >
+                                <Edit className="h-5 w-5" />
+                              </Link>
+                              <button
+                                onClick={() => handleDelete(product._id)}
+                                className="text-red-600 hover:text-red-900"
+                                title="Delete"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="px-4 py-3 flex justify-center">
+                  <div className="flex items-center gap-1">
+                    <button
+                      disabled={currentPage === 1}
+                      className="px-2 py-1 text-sm rounded border disabled:opacity-50"
+                    >
+                      ←
+                    </button>
+                    <span className="px-2 py-1 text-sm">
+                      {currentPage}/{totalPages}
+                    </span>
+                    <button
+                      disabled={currentPage === totalPages}
+                      className="px-2 py-1 text-sm rounded border disabled:opacity-50"
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="px-4 py-3 flex justify-center">
-              <div className="flex items-center gap-1">
-                <button
-                  disabled={currentPage === 1}
-                  className="px-2 py-1 text-sm rounded border disabled:opacity-50"
-                >
-                  ←
-                </button>
-                <span className="px-2 py-1 text-sm">
-                  {currentPage}/{totalPages}
-                </span>
-                <button
-                  disabled={currentPage === totalPages}
-                  className="px-2 py-1 text-sm rounded border disabled:opacity-50"
-                >
-                  →
-                </button>
+          {/* Mobile Cards (shown on mobile) */}
+          <div className="md:hidden space-y-4">
+            {products.length === 0 ? (
+              <div className="text-center p-6 text-gray-500">
+                No products found
               </div>
-            </div>
-          )}
-        </div>
-      </div>
+            ) : (
+              products.map((product) => (
+                <div
+                  key={product._id}
+                  className="bg-white rounded-lg shadow-sm p-4"
+                >
+                  <div className="flex items-start gap-4">
+                    <img
+                      className="h-16 w-16 rounded-md object-cover"
+                      src={product.images[0] || "/placeholder-product.jpg"}
+                      alt={product.name}
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">{product.name}</div>
+                      <div className="text-sm text-gray-500 mb-2">
+                        {typeof product.category === "object"
+                          ? product.category.name
+                          : "Unknown"}
+                      </div>
 
-      {/* Mobile Cards (shown on mobile) */}
-      <div className="md:hidden space-y-4">
-        {products.length === 0 ? (
-          <div className="text-center p-6 text-gray-500">No products found</div>
-        ) : (
-          products.map((product) => (
-            <div
-              key={product._id}
-              className="bg-white rounded-lg shadow-sm p-4"
-            >
-              <div className="flex items-start gap-4">
-                <img
-                  className="h-16 w-16 rounded-md object-cover"
-                  src={product.images[0] || "/placeholder-product.jpg"}
-                  alt={product.name}
-                />
-                <div className="flex-1">
-                  <div className="font-medium">{product.name}</div>
-                  <div className="text-sm text-gray-500 mb-2">
-                    {typeof product.category === "object"
-                      ? product.category.name
-                      : "Unknown"}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <span className="font-medium">Price:</span> $
-                      {product.price.toFixed(2)}
-                      {product.discountPrice && (
-                        <div className="text-xs line-through">
-                          ${product.discountPrice.toFixed(2)}
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="font-medium">Price:</span> $
+                          {product.price.toFixed(2)}
+                          {product.discountPrice && (
+                            <div className="text-xs line-through">
+                              ${product.discountPrice.toFixed(2)}
+                            </div>
+                          )}
                         </div>
-                      )}
+                        <div>
+                          <span className="font-medium">Stock:</span>{" "}
+                          {product.countInStock}
+                        </div>
+                        <div>
+                          <span className="font-medium">Status:</span>
+                          <span
+                            className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${
+                              product.countInStock > 0
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {product.countInStock > 0 ? "In Stock" : "Out"}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-medium">Stock:</span>{" "}
-                      {product.countInStock}
-                    </div>
-                    <div>
-                      <span className="font-medium">Status:</span>
-                      <span
-                        className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${
-                          product.countInStock > 0
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        to={`/admin/products/${product._id}`}
+                        className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        title="Edit"
                       >
-                        {product.countInStock > 0 ? "In Stock" : "Out"}
-                      </span>
+                        <Edit className="h-5 w-5" />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(product._id)}
+                        className="p-1 text-red-600 hover:bg-red-50 rounded"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
                     </div>
                   </div>
                 </div>
-
-                <div className="flex flex-col gap-2">
-                  <Link
-                    to={`/admin/products/${product._id}`}
-                    className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                    title="Edit"
-                  >
-                    <Edit className="h-5 w-5" />
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(product._id)}
-                    className="p-1 text-red-600 hover:bg-red-50 rounded"
-                    title="Delete"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

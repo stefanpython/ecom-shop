@@ -151,6 +151,7 @@ const ProductDetailPage = () => {
       setReviewSubmitting(false);
     }
   };
+
   if (loading) return <Loader />;
   if (!product)
     return <div className="text-center py-8">Product not found</div>;
