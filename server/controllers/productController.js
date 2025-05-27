@@ -58,6 +58,7 @@ const getProducts = asyncHandler(async (req, res) => {
     products,
     page,
     pages: Math.ceil(count / pageSize),
+    totalProducts: count,
     count,
   });
 });
