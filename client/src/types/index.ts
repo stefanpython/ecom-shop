@@ -205,3 +205,11 @@ export interface ProductParams {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
+
+// types.ts
+export interface OrdersResponse {
+  orders: Order[];
+  page: number;
+  pages: number;
+  count?: number;
+}
