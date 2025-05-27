@@ -9,7 +9,14 @@ import { getCategories } from "../../api/categories";
 import type { Product, Category, ProductParams } from "../../types";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
-import { Edit, Trash2, Plus, Search } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Plus,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { AxiosError } from "axios";
 
 const AdminProducts = () => {
@@ -356,13 +363,7 @@ const AdminProducts = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-around bg-white border-t-1 border-gray-300 rounded-lg shadow-sm p-4">
-              <div className="text-sm text-gray-600">
-                Showing {(currentPage - 1) * 8 + 1}-
-                {Math.min(currentPage * 8, totalProducts)} of {totalProducts}{" "}
-                products
-              </div>
-
+            <div className="flex items-center justify-between  rounded-lg shadow-sm p-4">
               <div className="flex gap-1">
                 <button
                   onClick={() =>
@@ -371,7 +372,7 @@ const AdminProducts = () => {
                   disabled={currentPage === 1}
                   className="px-3 py-1 border rounded disabled:opacity-50"
                 >
-                  Previous
+                  <ChevronLeft className="h-5 w-5" />
                 </button>
 
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -409,8 +410,14 @@ const AdminProducts = () => {
                   disabled={currentPage === totalPages}
                   className="px-3 py-1 border rounded disabled:opacity-50"
                 >
-                  Next
+                  <ChevronRight className="h-5 w-5" />
                 </button>
+              </div>
+
+              <div className="text-sm text-gray-600">
+                Showing {(currentPage - 1) * 8 + 1}-
+                {Math.min(currentPage * 8, totalProducts)} of {totalProducts}{" "}
+                products
               </div>
             </div>
           )}
