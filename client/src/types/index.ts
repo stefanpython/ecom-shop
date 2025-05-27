@@ -44,6 +44,7 @@ export interface ProductsResponse {
   page: number;
   pages: number;
   count: number;
+  totalProducts: number;
 }
 
 // Category types
@@ -195,4 +196,13 @@ export interface Payment {
   paymentMethod: string;
   status: string;
   createdAt?: string;
+}
+
+export interface ProductParams {
+  pageNumber?: number;
+  keyword?: string;
+  category?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  // Add other filter params you might need
 }
