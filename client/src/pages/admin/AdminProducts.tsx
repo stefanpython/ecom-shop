@@ -2,11 +2,11 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getProducts, deleteProduct } from "../../api/products";
 import { getCategories } from "../../api/categories";
-import type { Product, Category } from "../../types";
+import type { Product, Category, ProductParams } from "../../types";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
 import { Edit, Trash2, Plus, Search } from "lucide-react";
@@ -20,33 +20,42 @@ const AdminProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params: ProductParams = {
+        pageNumber: currentPage,
+        ...(searchTerm && { keyword: searchTerm }),
+        ...(selectedCategory && { category: selectedCategory }),
+      };
+
+      const data = await getProducts(params);
+      setProducts(data.products);
+      setTotalPages(data.pages);
+      setTotalProducts(data.totalProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast.error("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, searchTerm, selectedCategory]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    const loadData = async () => {
+      await fetchProducts();
+      // Load categories separately if needed
       try {
-        const [productsData, categoriesData] = await Promise.all([
-          getProducts({
-            pageNumber: currentPage,
-            keyword: searchTerm,
-            category: selectedCategory,
-          }),
-          getCategories(),
-        ]);
-
-        setProducts(productsData.products);
-        setTotalPages(productsData.pages);
+        const categoriesData = await getCategories();
         setCategories(categoriesData);
       } catch (error) {
-        console.error("Error fetching products:", error);
-        toast.error("Failed to load products");
-      } finally {
-        setLoading(false);
+        console.error("Error fetching categories:", error);
       }
     };
-
-    fetchData();
-  }, [currentPage, searchTerm, selectedCategory]);
+    loadData();
+  }, [fetchProducts]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -268,22 +277,62 @@ const AdminProducts = () => {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="px-4 py-3 flex justify-center">
-                  <div className="flex items-center gap-1">
+                <div className="flex items-center justify-between mt-6">
+                  <div className="text-sm text-gray-600">
+                    Showing {(currentPage - 1) * 8 + 1}-
+                    {Math.min(currentPage * 8, totalProducts)} of{" "}
+                    {totalProducts} products
+                  </div>
+
+                  <div className="flex gap-1">
                     <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
                       disabled={currentPage === 1}
-                      className="px-2 py-1 text-sm rounded border disabled:opacity-50"
+                      className="px-3 py-1 border rounded disabled:opacity-50"
                     >
-                      ←
+                      Previous
                     </button>
-                    <span className="px-2 py-1 text-sm">
-                      {currentPage}/{totalPages}
-                    </span>
+
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      // Show limited page numbers with ellipsis
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`px-3 py-1 border rounded ${
+                            currentPage === pageNum
+                              ? "bg-blue-500 text-white"
+                              : ""
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+
+                    {totalPages > 5 && <span className="px-2 py-1">...</span>}
+
                     <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
                       disabled={currentPage === totalPages}
-                      className="px-2 py-1 text-sm rounded border disabled:opacity-50"
+                      className="px-3 py-1 border rounded disabled:opacity-50"
                     >
-                      →
+                      Next
                     </button>
                   </div>
                 </div>

@@ -204,5 +204,4 @@ export interface ProductParams {
   category?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
-  // Add other filter params you might need
 }
