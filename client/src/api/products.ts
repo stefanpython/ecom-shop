@@ -16,7 +16,6 @@ export const getProducts = async (
   params: ProductParams = {}
 ): Promise<ProductsResponse> => {
   const response = await api.get("/products", { params });
-  console.log("API Response:", response.data);
   return response.data;
 };
 
