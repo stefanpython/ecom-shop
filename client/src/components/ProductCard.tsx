@@ -21,7 +21,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <Link to={`/products/${product._id}`} className="card group">
-      <div className="relative h-48 overflow-hidden">
+      <div className="relative h-48 overflow-hidden border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
         <img
           src={product.images[0] || "/placeholder-product.jpg"}
           alt={product.name}
