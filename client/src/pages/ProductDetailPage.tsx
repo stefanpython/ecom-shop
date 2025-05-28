@@ -168,13 +168,13 @@ const ProductDetailPage = () => {
           Products
         </Link>
         <ChevronRight className="h-4 w-4 mx-1" />
-        <span className="truncate">{product.name}</span>
+        <span className="truncate">{product.name} </span>
       </div>
 
       {/* Product details */}
       <div className="grid md:grid-cols-2 gap-8">
         {/* Product images */}
-        <div className="space-y-4">
+        <div className="space-y-4 border border-gray-200 rounded-lg shadow-sm">
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <img
               src={selectedImage || "/placeholder-product.jpg"}
