@@ -280,7 +280,7 @@ const ProductDetailPage = () => {
               <div className="w-24">
                 <label
                   htmlFor="quantity"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1 mr-2"
                 >
                   Quantity
                 </label>
@@ -288,7 +288,7 @@ const ProductDetailPage = () => {
                   id="quantity"
                   value={quantity}
                   onChange={handleQuantityChange}
-                  className="input"
+                  className="input border cursor-pointer"
                 >
                   {[...Array(Math.min(10, product.countInStock))].map(
                     (_, i) => (
@@ -302,10 +302,12 @@ const ProductDetailPage = () => {
 
               <button
                 onClick={handleAddToCart}
-                className="flex-1 btn btn-primary flex items-center justify-center"
+                className="flex btn btn-primary flex-1 items-center justify-center gap-2"
               >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Add to Cart
+                <div className="flex items-center gap-2 justify-center">
+                  <ShoppingCart className="h-5 w-5" />
+                  <span>Add to Cart</span>
+                </div>
               </button>
             </div>
           )}
@@ -316,7 +318,7 @@ const ProductDetailPage = () => {
       {product.richDescription && (
         <div className="mt-12">
           <h2 className="text-xl font-bold mb-4">Product Description</h2>
-          <div className="prose max-w-none bg-white p-6 rounded-lg shadow-sm">
+          <div className="prose max-w-none bg-white p-6 rounded-lg border border-gray-200 shadow-lg">
             {product.richDescription}
           </div>
         </div>
@@ -324,7 +326,7 @@ const ProductDetailPage = () => {
 
       {/* Reviews section */}
       <div className="mt-12">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 ">
           <h2 className="text-xl font-bold">Customer Reviews</h2>
           {isAuthenticated && (
             <button
@@ -338,7 +340,7 @@ const ProductDetailPage = () => {
 
         {/* Review form */}
         {showReviewForm && (
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-sm mb-8 ">
             <h3 className="text-lg font-semibold mb-4">Write Your Review</h3>
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               <div>
@@ -368,7 +370,7 @@ const ProductDetailPage = () => {
               <div>
                 <label
                   htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1 "
                 >
                   Title
                 </label>
@@ -420,11 +422,11 @@ const ProductDetailPage = () => {
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="">
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className="bg-white p-6 rounded-lg shadow-sm"
+                className="bg-white p-6 border border-gray-200 shadow-lg rounded-xl"
               >
                 <div className="flex justify-between items-start">
                   <div>
