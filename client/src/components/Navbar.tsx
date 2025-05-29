@@ -29,12 +29,12 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="px-3 py-2 text-xl hover:text-blue-600">
+            <Link to="/" className="px-3 py-2 text-lg hover:text-blue-600">
               Home
             </Link>
             <Link
               to="/products"
-              className="px-3 text-xl py-2 hover:text-blue-600"
+              className="px-3 text-lg py-2 hover:text-blue-600"
             >
               Products
             </Link>
@@ -42,7 +42,7 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/cart" className="relative px-3 py-2 hover:text-blue-600">
-              <ShoppingCart className="h-7 w-7" />
+              <ShoppingCart className="h-6 w-6" />
               {cart && cart.totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cart.totalItems}
@@ -53,8 +53,8 @@ const Navbar = () => {
             {isAuthenticated ? (
               <div className="relative group">
                 <button className="flex items-center px-3 py-2 hover:text-blue-600">
-                  <User className="h-7 w-7 mr-1 -ml-4.5" />
-                  <span className="text-xl">{user?.name.split(" ")[0]}</span>
+                  <User className="h-6 w-6 mr-1 -ml-4.5" />
+                  <span className="text-lg">{user?.name.split(" ")[0]}</span>
                 </button>
                 <div className="absolute right-0 w-48 bg-white shadow-lg rounded-md hidden group-hover:block z-10">
                   <Link
