@@ -139,7 +139,7 @@ const LoginPage = () => {
             to={redirect ? `/register?redirect=${redirect}` : "/register"}
             className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
           >
-            Create one
+            Register
           </Link>
         </div>
       </div>
