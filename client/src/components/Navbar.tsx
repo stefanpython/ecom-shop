@@ -22,24 +22,27 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="text-xl font-bold text-blue-600">
+            <Link to="/" className="text-2xl font-bold text-blue-600">
               ShopApp
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="px-3 py-2 hover:text-blue-600">
+            <Link to="/" className="px-3 py-2 text-xl hover:text-blue-600">
               Home
             </Link>
-            <Link to="/products" className="px-3 py-2 hover:text-blue-600">
+            <Link
+              to="/products"
+              className="px-3 text-xl py-2 hover:text-blue-600"
+            >
               Products
             </Link>
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/cart" className="relative px-3 py-2 hover:text-blue-600">
-              <ShoppingCart className="h-6 w-6" />
+              <ShoppingCart className="h-7 w-7" />
               {cart && cart.totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cart.totalItems}
@@ -50,8 +53,8 @@ const Navbar = () => {
             {isAuthenticated ? (
               <div className="relative group">
                 <button className="flex items-center px-3 py-2 hover:text-blue-600">
-                  <User className="h-6 w-6 mr-1" />
-                  <span>{user?.name.split(" ")[0]}</span>
+                  <User className="h-7 w-7 mr-1 -ml-4.5" />
+                  <span className="text-xl">{user?.name.split(" ")[0]}</span>
                 </button>
                 <div className="absolute right-0 w-48 bg-white shadow-lg rounded-md hidden group-hover:block z-10">
                   <Link
