@@ -159,239 +159,165 @@ const ProductsPage = () => {
     window.scrollTo(0, 0);
   };
 
-  const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedCategory("");
-    setPriceRange({ min: undefined, max: undefined });
-    setSort({ by: "createdAt", order: "desc" });
-    setSearchParams(new URLSearchParams());
-  };
-
   return (
-    <div className="container-fluid py-4">
-      <div className="row">
-        {/* Mobile filter toggle */}
-        <div className="col-12 d-md-none mb-3">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center"
+    <div className="flex flex-col md:flex-row gap-6">
+      {/* Mobile filter toggle */}
+      <div className="md:hidden mb-4">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="flex items-center justify-center w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          <Filter className="h-4 w-4 mr-2" />
+          {showFilters ? "Hide Filters" : "Show Filters"}
+        </button>
+      </div>
+
+      {/* Filters sidebar */}
+      <div
+        className={`${
+          showFilters ? "block" : "hidden"
+        } md:block w-full md:w-72 space-y-6 bg-white p-6 rounded-lg shadow-md border border-gray-100`}
+      >
+        <div>
+          <h3 className="font-semibold text-lg mb-3 text-gray-800">Search</h3>
+          <form onSubmit={handleSearch} className="flex">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search products..."
+              className="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 transition-colors"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+          </form>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-lg mb-3 text-gray-800">
+            Categories
+          </h3>
+          <select
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
-            <Filter className="me-2" size={18} />
-            {showFilters ? "Hide Filters" : "Show Filters"}
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category._id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-lg mb-3 text-gray-800">
+            Price Range
+          </h3>
+          <div className="flex items-center gap-2 mb-2">
+            <input
+              type="number"
+              name="min"
+              value={priceRange.min || ""}
+              onChange={handlePriceChange}
+              placeholder="Min"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+            <span className="text-gray-500">to</span>
+            <input
+              type="number"
+              name="max"
+              value={priceRange.max || ""}
+              onChange={handlePriceChange}
+              placeholder="Max"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+          <button
+            onClick={handleApplyPriceFilter}
+            className="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Apply Price Filter
           </button>
         </div>
 
-        {/* Filters sidebar */}
-        <div
-          className={`col-md-3 ${
-            showFilters ? "d-block" : "d-none"
-          } d-md-block`}
-        >
-          <div className="card shadow-sm mb-4">
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="card-title mb-0">Filters</h5>
-                <button
-                  onClick={clearFilters}
-                  className="btn btn-sm btn-outline-secondary"
-                >
-                  Clear all
-                </button>
-              </div>
-
-              {/* Search Form - Enhanced */}
-              <div className="mb-4">
-                <form onSubmit={handleSearch}>
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Search products..."
-                      className="form-control border-end-0"
-                      style={{
-                        borderRight: "none",
-                        boxShadow: "none",
-                        height: "45px",
-                      }}
-                    />
-                    <button
-                      type="submit"
-                      className="btn btn-primary d-flex align-items-center justify-content-center"
-                      style={{
-                        width: "45px",
-                        height: "45px",
-                      }}
-                    >
-                      <Search size={18} />
-                    </button>
-                  </div>
-                  {searchTerm && (
-                    <div className="mt-2">
-                      <small className="text-muted">
-                        Press enter to search or{" "}
-                        <a
-                          href="#"
-                          onClick={() => {
-                            setSearchTerm("");
-                            updateFilters({ keyword: "" });
-                          }}
-                          className="text-primary"
-                        >
-                          clear
-                        </a>
-                      </small>
-                    </div>
-                  )}
-                </form>
-              </div>
-
-              <div className="mb-4">
-                <label className="form-label fw-semibold">Categories</label>
-                <select
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  className="form-select"
-                >
-                  <option value="">All Categories</option>
-                  {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="mb-4">
-                <label className="form-label fw-semibold">Price Range</label>
-                <div className="d-flex align-items-center gap-2 mb-2">
-                  <input
-                    type="number"
-                    name="min"
-                    value={priceRange.min || ""}
-                    onChange={handlePriceChange}
-                    placeholder="Min"
-                    className="form-control"
-                    min="0"
-                  />
-                  <span className="text-muted">to</span>
-                  <input
-                    type="number"
-                    name="max"
-                    value={priceRange.max || ""}
-                    onChange={handlePriceChange}
-                    placeholder="Max"
-                    className="form-control"
-                    min="0"
-                  />
-                </div>
-                <button
-                  onClick={handleApplyPriceFilter}
-                  className="btn btn-outline-primary w-100"
-                >
-                  Apply Price Filter
-                </button>
-              </div>
-
-              <div>
-                <label className="form-label fw-semibold">Sort By</label>
-                <select
-                  value={`${sort.by}-${sort.order}`}
-                  onChange={handleSortChange}
-                  className="form-select"
-                >
-                  <option value="createdAt-desc">Newest</option>
-                  <option value="createdAt-asc">Oldest</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="rating-desc">Highest Rated</option>
-                </select>
-              </div>
-            </div>
-          </div>
+        <div>
+          <h3 className="font-semibold text-lg mb-3 text-gray-800">Sort By</h3>
+          <select
+            value={`${sort.by}-${sort.order}`}
+            onChange={handleSortChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+            <option value="createdAt-desc">Newest</option>
+            <option value="createdAt-asc">Oldest</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating-desc">Highest Rated</option>
+          </select>
         </div>
+      </div>
 
-        {/* Products grid */}
-        <div className="col-md-9">
-          {loading ? (
-            <Loader />
-          ) : products.length === 0 ? (
-            <div className="text-center py-5">
-              <div className="card shadow-sm">
-                <div className="card-body py-5">
-                  <h4 className="text-muted mb-3">No products found</h4>
-                  <p className="text-muted mb-4">
-                    Try adjusting your search or filter criteria
-                  </p>
-                  <button onClick={clearFilters} className="btn btn-primary">
-                    Clear all filters
+      {/* Products grid */}
+      <div className="flex-1">
+        {loading ? (
+          <Loader />
+        ) : products.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-600">
+              No products found matching your criteria.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-10">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handlePageChange(i + 1)}
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        currentPage === i + 1
+                          ? "bg-indigo-600 text-white"
+                          : "border border-gray-300 hover:bg-gray-100"
+                      } transition-colors`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <ChevronRight className="h-5 w-5" />
                   </button>
                 </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                {products.map((product) => (
-                  <div key={product._id} className="col">
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <nav className="mt-4">
-                  <ul className="pagination justify-content-center">
-                    <li
-                      className={`page-item ${
-                        currentPage === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        className="page-link"
-                        aria-label="Previous"
-                      >
-                        <ChevronLeft size={18} />
-                      </button>
-                    </li>
-
-                    {[...Array(totalPages)].map((_, i) => (
-                      <li
-                        key={i}
-                        className={`page-item ${
-                          currentPage === i + 1 ? "active" : ""
-                        }`}
-                      >
-                        <button
-                          onClick={() => handlePageChange(i + 1)}
-                          className="page-link"
-                        >
-                          {i + 1}
-                        </button>
-                      </li>
-                    ))}
-
-                    <li
-                      className={`page-item ${
-                        currentPage === totalPages ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        className="page-link"
-                        aria-label="Next"
-                      >
-                        <ChevronRight size={18} />
-                      </button>
-                    </li>
-                  </ul>
-                </nav>
-              )}
-            </>
-          )}
-        </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
