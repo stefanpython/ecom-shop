@@ -186,13 +186,15 @@ const ProductsPage = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search products..."
-              className="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="flex-grow px-4 py-2 border border-gray-300 max-w-[200px] 
+    rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 transition-colors"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-r-lg
+               hover:bg-indigo-700 transition-colors flex items-center justify-center"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-6 w-5" />
             </button>
           </form>
         </div>
