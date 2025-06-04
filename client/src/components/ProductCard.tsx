@@ -20,7 +20,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <Link to={`/products/${product._id}`} className="card group">
+    <Link
+      to={`/products/${product._id}`}
+      className="card group border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+    >
       <div className="relative h-48 overflow-hidden border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
         <img
           src={product.images[0] || "/placeholder-product.jpg"}
