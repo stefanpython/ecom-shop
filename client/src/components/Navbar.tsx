@@ -22,6 +22,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
+            {/* Logo */}
+            <img src="/logo.svg" alt="Logo" className="h-10 w-10 mr-2" />
             <Link to="/" className="text-2xl font-bold text-blue-600">
               ShopApp
             </Link>
