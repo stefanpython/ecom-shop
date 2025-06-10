@@ -26,7 +26,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     >
       <div className="relative h-48 overflow-hidden border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
         <img
-          src={product.images[0] || "/placeholder-product.jpg"}
+          src={product.images[0] || "https://placehold.net/600x600.png"}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
