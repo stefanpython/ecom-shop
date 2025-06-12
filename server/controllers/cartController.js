@@ -227,10 +227,95 @@ const clearCart = asyncHandler(async (req, res) => {
   res.json({ message: "Cart cleared" });
 });
 
+// @desc    Merge guest cart with user cart
+// @route   POST /api/cart/merge
+// @access  Private
+const mergeGuestCart = asyncHandler(async (req, res) => {
+  const { guestItems } = req.body; // Array of { productId, quantity, attributes }
+
+  // Validate all products first
+  const products = await Product.find({
+    _id: { $in: guestItems.map((item) => item.productId) },
+  });
+
+  if (products.length !== guestItems.length) {
+    res.status(400);
+    throw new Error("Some products in guest cart no longer exist");
+  }
+
+  // Check stock for all items
+  const stockErrors = [];
+  guestItems.forEach((guestItem) => {
+    const product = products.find(
+      (p) => p._id.toString() === guestItem.productId
+    );
+    if (product.countInStock < guestItem.quantity) {
+      stockErrors.push(`Not enough stock for ${product.name}`);
+    }
+  });
+
+  if (stockErrors.length > 0) {
+    res.status(400);
+    throw new Error(stockErrors.join(", "));
+  }
+
+  // Get or create user cart
+  let cart = await Cart.findOne({ user: req.user._id });
+  if (!cart) {
+    cart = await Cart.create({
+      user: req.user._id,
+      items: [],
+      totalPrice: 0,
+      totalItems: 0,
+    });
+  }
+
+  // Merge items
+  guestItems.forEach((guestItem) => {
+    const existingItem = cart.items.find(
+      (item) => item.product.toString() === guestItem.productId
+    );
+
+    if (existingItem) {
+      existingItem.quantity += guestItem.quantity;
+    } else {
+      const product = products.find(
+        (p) => p._id.toString() === guestItem.productId
+      );
+      cart.items.push({
+        product: guestItem.productId,
+        quantity: guestItem.quantity,
+        price: product.price,
+        attributes: guestItem.attributes || {},
+      });
+    }
+  });
+
+  // Recalculate totals
+  cart.totalItems = cart.items.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+  cart.totalPrice = cart.items.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  await cart.save();
+
+  const populatedCart = await Cart.findById(cart._id).populate({
+    path: "items.product",
+    select: "name images price countInStock",
+  });
+
+  res.status(200).json(populatedCart);
+});
+
 module.exports = {
   getCart,
   addToCart,
   updateCartItem,
   removeCartItem,
   clearCart,
+  mergeGuestCart,
 };
