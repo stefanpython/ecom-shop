@@ -37,6 +37,7 @@ export interface Product {
   discountPrice?: number;
   discountPercentage?: number;
   attributes: Record<string, string | number | boolean | null>;
+  oldPrice?: number;
 }
 
 export interface ProductsResponse {
@@ -55,6 +56,7 @@ export interface Category {
   image?: string;
   parent?: Category | string;
   isActive?: boolean;
+  productCount: number;
 }
 
 // Cart types
