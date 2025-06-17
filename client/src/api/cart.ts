@@ -33,3 +33,14 @@ export const clearCart = async (): Promise<{ message: string }> => {
   const response = await api.delete("/cart");
   return response.data;
 };
+
+export const mergeGuestCart = async (
+  guestItems: Array<{
+    productId: string;
+    quantity: number;
+    attributes?: Record<string, string | number>;
+  }>
+): Promise<Cart> => {
+  const response = await api.post("/cart/merge", { guestItems });
+  return response.data;
+};
