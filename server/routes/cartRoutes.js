@@ -10,11 +10,7 @@ const {
 } = require("../controllers/cartController");
 const { protect } = require("../middleware/authMiddleware");
 
-router
-  .route("/")
-  .get(protect, getCart)
-  .post(protect, addToCart)
-  .delete(protect, clearCart);
+router.route("/").get(getCart).post(addToCart).delete(protect, clearCart);
 
 router
   .route("/:itemId")

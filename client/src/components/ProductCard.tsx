@@ -16,7 +16,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    addToCart(product._id);
+    addToCart(product._id, 1, {
+      price: product.price,
+      name: product.name,
+      image: product.images[0],
+      discountPrice: product.discountPrice,
+      discountPercentage: product.discountPercentage,
+    });
   };
 
   return (

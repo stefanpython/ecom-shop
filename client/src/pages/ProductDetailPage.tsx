@@ -58,7 +58,13 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart(product._id, quantity);
+      addToCart(product._id, quantity, {
+        price: product.price,
+        name: product.name,
+        image: selectedImage || product.images[0],
+        discountPrice: product.discountPrice,
+        discountPercentage: product.discountPercentage,
+      });
     }
   };
 

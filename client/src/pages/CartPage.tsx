@@ -9,6 +9,7 @@ import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 const CartPage = () => {
   const {
     cart,
+    guestCart,
     loading,
     updateItem,
     removeItem,
@@ -19,10 +20,10 @@ const CartPage = () => {
 
   if (loading) return <Loader />;
 
-  // Determine if cart is empty
-  const isCartEmpty = !cart || cart.items.length === 0;
-
-  console.log("CartPage render - isCartEmpty:", isCartEmpty);
+  // Determine if cart is empty (both user and guest)
+  const isCartEmpty = isAuthenticated
+    ? !cart || cart.items.length === 0
+    : guestCart.length === 0;
 
   if (isCartEmpty) {
     return (
@@ -49,77 +50,142 @@ const CartPage = () => {
     removeItem(itemId);
   };
 
-  // Render cart items
+  // Render cart items based on authentication status
   const renderCartItems = () => {
-    return cart?.items.map((item) => (
-      <tr key={item.id}>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="flex items-center">
-            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-              <img
-                src={item.image || "/placeholder-product.jpg"}
-                alt={item.name}
-                className="h-full w-full object-cover object-center"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    "/placeholder-product.jpg";
-                }}
-              />
+    if (isAuthenticated && cart) {
+      return cart.items.map((item) => (
+        <tr key={item._id}>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="flex items-center">
+              <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                <img
+                  src={item.product.images[0] || "/placeholder-product.jpg"}
+                  alt={item.product.name}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+              <div className="ml-4">
+                <Link
+                  to={`/products/${item.product._id}`}
+                  className="font-medium text-gray-900 hover:text-blue-600"
+                >
+                  {item.product.name}
+                </Link>
+              </div>
             </div>
-            <div className="ml-4">
-              <Link
-                to={`/products/${item.productId}`}
-                className="font-medium text-gray-900 hover:text-blue-600"
-              >
-                {item.name}
-              </Link>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm text-gray-900">
+              ${item.price.toFixed(2)}
             </div>
-          </div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-sm text-gray-900">${item.price.toFixed(2)}</div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <select
-            value={item.quantity}
-            onChange={(e) =>
-              handleQuantityChange(item.id, Number(e.target.value))
-            }
-            className="input max-w-[80px]"
-          >
-            {[...Array(10)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
-          </select>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-sm font-medium text-gray-900">
-            ${(item.price * item.quantity).toFixed(2)}
-          </div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <button
-            onClick={() => handleRemoveItem(item.id)}
-            className="text-red-600 hover:text-red-900"
-            aria-label="Remove item"
-          >
-            <Trash2 className="h-5 w-5" />
-          </button>
-        </td>
-      </tr>
-    ));
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <select
+              value={item.quantity}
+              onChange={(e) =>
+                handleQuantityChange(item._id, Number(e.target.value))
+              }
+              className="input max-w-[80px]"
+            >
+              {[...Array(Math.min(10, item.product.countInStock))].map(
+                (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                )
+              )}
+            </select>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm font-medium text-gray-900">
+              ${(item.price * item.quantity).toFixed(2)}
+            </div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button
+              onClick={() => handleRemoveItem(item._id)}
+              className="text-red-600 hover:text-red-900"
+              aria-label="Remove item"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          </td>
+        </tr>
+      ));
+    } else {
+      // Render guest cart items
+      console.log("Rendering guest cart items:", guestCart);
+      return guestCart.map((item, index) => (
+        <tr key={`${item.productId}-${index}`}>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="flex items-center">
+              <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                <img
+                  src={item.image || "/placeholder-product.jpg"}
+                  alt={item.name}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+              <div className="ml-4">
+                <Link
+                  to={`/products/${item.productId}`}
+                  className="font-medium text-gray-900 hover:text-blue-600"
+                >
+                  {item.name}
+                </Link>
+              </div>
+            </div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm text-gray-900">
+              ${item.price.toFixed(2)}
+            </div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <select
+              value={item.quantity}
+              onChange={(e) =>
+                handleQuantityChange(item.productId, Number(e.target.value))
+              }
+              className="input max-w-[80px]"
+            >
+              {[...Array(10)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm font-medium text-gray-900">
+              ${(item.price * item.quantity).toFixed(2)}
+            </div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button
+              onClick={() => handleRemoveItem(item.productId)}
+              className="text-red-600 hover:text-red-900"
+              aria-label="Remove item"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          </td>
+        </tr>
+      ));
+    }
   };
 
   const itemsCount = getCartItemsCount();
   const totalPrice = getCartTotal();
 
+  console.log("CartPage render - itemsCount:", itemsCount);
+  console.log("CartPage render - totalPrice:", totalPrice);
+
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-bold">Shopping Cart</h1>
 
-      {!isAuthenticated && cart && cart.items.length > 0 && (
+      {!isAuthenticated && guestCart.length > 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-blue-800">
             <strong>Guest Cart:</strong> Your items are temporarily saved.
