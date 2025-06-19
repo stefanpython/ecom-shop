@@ -63,18 +63,19 @@ const AdminCategories = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Categories</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold">Categories</h1>
         <Link
           to="/admin/categories/new"
-          className="btn btn-primary flex items-center"
+          className="btn btn-primary flex items-center justify-center sm:justify-start w-full sm:w-auto"
         >
           <Plus className="h-5 w-5 mr-1" />
-          Add Category
+          <span>Add Category</span>
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Desktop Table (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -184,6 +185,78 @@ const AdminCategories = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards (shown on mobile) */}
+      <div className="md:hidden space-y-4">
+        {categories.length === 0 ? (
+          <div className="text-center p-6 text-gray-500">
+            No categories found
+          </div>
+        ) : (
+          categories.map((category) => (
+            <div
+              key={category._id}
+              className="bg-white rounded-lg shadow-sm p-4"
+            >
+              <div className="flex items-start gap-4">
+                {category.image && (
+                  <img
+                    className="h-16 w-16 rounded-md object-cover"
+                    src={category.image || "/placeholder.svg"}
+                    alt={category.name}
+                  />
+                )}
+                <div className="flex-1">
+                  <div className="font-medium">{category.name}</div>
+                  <div className="text-sm text-gray-500 mb-2">
+                    {category.description || "No description"}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <span className="font-medium">Parent:</span>{" "}
+                      {category.parent
+                        ? typeof category.parent === "object"
+                          ? category.parent.name
+                          : "Parent Category"
+                        : "None"}
+                    </div>
+                    <div>
+                      <span className="font-medium">Status:</span>
+                      <span
+                        className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${
+                          category.isActive !== false
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {category.isActive !== false ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Link
+                    to={`/admin/categories/${category._id}`}
+                    className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                    title="Edit"
+                  >
+                    <Edit className="h-5 w-5" />
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(category._id)}
+                    className="p-1 text-red-600 hover:bg-red-50 rounded"
+                    title="Delete"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
