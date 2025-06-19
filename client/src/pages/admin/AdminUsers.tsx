@@ -62,11 +62,9 @@ const AdminUsers = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Users</h1>
-      </div>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Users</h1>
 
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <form onSubmit={handleSearch} className="flex">
           <input
             type="text"
@@ -84,7 +82,8 @@ const AdminUsers = () => {
         </form>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Desktop Table (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -187,6 +186,71 @@ const AdminUsers = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards (shown on mobile) */}
+      <div className="md:hidden space-y-4">
+        {filteredUsers.length === 0 ? (
+          <div className="text-center p-6 text-gray-500">No users found</div>
+        ) : (
+          filteredUsers.map((user) => (
+            <div key={user._id} className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <div className="font-medium">{user.name}</div>
+                  <div className="text-sm text-gray-500">
+                    ID: {user._id.slice(-8)}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Link
+                    to={`/admin/users/${user._id}`}
+                    className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                    title="Edit"
+                  >
+                    <Edit className="h-5 w-5" />
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(user._id)}
+                    className="p-1 text-red-600 hover:bg-red-50 rounded"
+                    title="Delete"
+                    disabled={user.isAdmin}
+                  >
+                    <Trash2
+                      className={`h-5 w-5 ${
+                        user.isAdmin ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="font-medium">Email:</span> {user.email}
+                </div>
+                <div>
+                  <span className="font-medium">Role:</span>{" "}
+                  <span
+                    className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${
+                      user.isAdmin
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
+                    {user.isAdmin ? "Admin" : "Customer"}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-medium">Registered:</span>{" "}
+                  {user.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString()
+                    : "N/A"}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
