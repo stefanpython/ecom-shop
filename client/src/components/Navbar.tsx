@@ -8,7 +8,7 @@ import { ShoppingCart, User, Menu, X, LayoutDashboard } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
-  const { cart } = useCart();
+  const { getCartItemsCount } = useCart();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -16,6 +16,8 @@ const Navbar = () => {
     logout();
     navigate("/");
   };
+
+  const cartItemsCount = getCartItemsCount();
 
   return (
     <nav className="bg-white shadow-md">
@@ -43,11 +45,15 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/cart" className="relative px-3 py-2 hover:text-blue-600">
+            <Link
+              to="/cart"
+              className="relative px-3 py-2 hover:text-blue-600"
+              aria-label={`Shopping Cart with ${cartItemsCount} items`}
+            >
               <ShoppingCart className="h-6 w-6" />
-              {cart && cart.totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cart.totalItems}
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transition-transform duration-200 transform hover:scale-110">
+                  {cartItemsCount}
                 </span>
               )}
             </Link>
@@ -100,17 +106,19 @@ const Navbar = () => {
             <Link
               to="/cart"
               className="relative px-3 py-2 mr-2 hover:text-blue-600"
+              aria-label={`Shopping Cart with ${cartItemsCount} items`}
             >
               <ShoppingCart className="h-6 w-6" />
-              {cart && cart.totalItems > 0 && (
+              {cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cart.totalItems}
+                  {cartItemsCount}
                 </span>
               )}
             </Link>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-blue-600 focus:outline-none"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />

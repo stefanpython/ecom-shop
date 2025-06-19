@@ -114,7 +114,6 @@ const CartPage = () => {
       ));
     } else {
       // Render guest cart items
-      console.log("Rendering guest cart items:", guestCart);
       return guestCart.map((item, index) => (
         <tr key={`${item.productId}-${index}`}>
           <td className="px-6 py-4 whitespace-nowrap">
@@ -177,9 +176,6 @@ const CartPage = () => {
 
   const itemsCount = getCartItemsCount();
   const totalPrice = getCartTotal();
-
-  console.log("CartPage render - itemsCount:", itemsCount);
-  console.log("CartPage render - totalPrice:", totalPrice);
 
   return (
     <div className="space-y-8">
