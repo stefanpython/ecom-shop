@@ -109,38 +109,50 @@ const AdminOrders = () => {
     return pages;
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Delivered":
+        return "bg-green-100 text-green-800";
+      case "Cancelled":
+        return "bg-red-100 text-red-800";
+      case "Shipped":
+        return "bg-blue-100 text-blue-800";
+      case "Processing":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   if (loading) return <Loader />;
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Orders</h1>
-      </div>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Orders</h1>
 
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <form onSubmit={handleSearch} className="flex">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by order ID or customer..."
-                className="input flex-grow"
-              />
-              <button
-                type="submit"
-                className="ml-2 p-2 bg-blue-600 text-white rounded"
-              >
-                <Search className="h-5 w-5" />
-              </button>
-            </form>
-          </div>
-          <div>
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="flex flex-col gap-3">
+          <form onSubmit={handleSearch} className="flex">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by order ID or customer..."
+              className="input flex-grow"
+            />
+            <button
+              type="submit"
+              className="ml-2 p-2 bg-blue-600 text-white rounded"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+          </form>
+
+          <div className="grid grid-cols-2 gap-3">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="input w-full"
+              className="input"
             >
               <option value="">All Statuses</option>
               <option value="Pending">Pending</option>
@@ -149,12 +161,11 @@ const AdminOrders = () => {
               <option value="Delivered">Delivered</option>
               <option value="Cancelled">Cancelled</option>
             </select>
-          </div>
-          <div>
+
             <select
               value={paymentFilter}
               onChange={(e) => setPaymentFilter(e.target.value)}
-              className="input w-full"
+              className="input"
             >
               <option value="">All Payments</option>
               <option value="paid">Paid</option>
@@ -170,7 +181,8 @@ const AdminOrders = () => {
         of {filteredOrders.length} orders
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Desktop Table (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -258,17 +270,9 @@ const AdminOrders = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          order.status === "Delivered"
-                            ? "bg-green-100 text-green-800"
-                            : order.status === "Cancelled"
-                            ? "bg-red-100 text-red-800"
-                            : order.status === "Shipped"
-                            ? "bg-blue-100 text-blue-800"
-                            : order.status === "Processing"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                          order.status || "Pending"
+                        )}`}
                       >
                         {order.status}
                       </span>
@@ -300,10 +304,74 @@ const AdminOrders = () => {
         </div>
       </div>
 
+      {/* Mobile Cards (shown on mobile) */}
+      <div className="md:hidden space-y-4">
+        {currentOrders.length === 0 ? (
+          <div className="text-center p-6 text-gray-500">No orders found</div>
+        ) : (
+          currentOrders.map((order) => (
+            <div key={order._id} className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <div className="font-medium">#{order._id.slice(-8)}</div>
+                  <div className="text-sm text-gray-500">
+                    {order.createdAt
+                      ? new Date(order.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </div>
+                </div>
+                <Link
+                  to={`/admin/orders/${order._id}`}
+                  className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                  title="View"
+                >
+                  <Eye className="h-5 w-5" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="font-medium">Customer:</span>{" "}
+                  {typeof order.user === "object"
+                    ? order.user.name
+                    : "User ID: " + order.user}
+                </div>
+                <div>
+                  <span className="font-medium">Total:</span> $
+                  {order.totalPrice.toFixed(2)}
+                </div>
+                <div>
+                  <span className="font-medium">Status:</span>{" "}
+                  <span
+                    className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${getStatusColor(
+                      order.status || "Pending"
+                    )}`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-medium">Payment:</span>{" "}
+                  <span
+                    className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${
+                      order.isPaid
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {order.isPaid ? "Paid" : "Unpaid"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-1">
             <button
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage === 1}
@@ -312,17 +380,17 @@ const AdminOrders = () => {
               <ChevronLeft className="h-5 w-5" />
             </button>
 
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center gap-1">
               {getPageNumbers().map((page, index) =>
                 page === "..." ? (
-                  <span key={index} className="px-3 py-2 text-sm text-gray-500">
+                  <span key={index} className="px-2 py-1 text-sm text-gray-500">
                     ...
                   </span>
                 ) : (
                   <button
                     key={index}
                     onClick={() => goToPage(page as number)}
-                    className={`px-3 py-2 text-sm font-medium rounded-md ${
+                    className={`px-3 py-1 text-sm font-medium rounded-md ${
                       currentPage === page
                         ? "bg-blue-600 text-white"
                         : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
