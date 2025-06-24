@@ -428,7 +428,12 @@ const ProductDetailPage = () => {
                     Submitting...
                   </span>
                 ) : (
-                  "Submit Review"
+                  <span
+                    className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md
+                   hover:bg-blue-700 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                  >
+                    Submit Review
+                  </span>
                 )}
               </button>
             </form>
