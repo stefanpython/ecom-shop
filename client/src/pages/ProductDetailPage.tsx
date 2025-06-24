@@ -340,7 +340,16 @@ const ProductDetailPage = () => {
               onClick={() => setShowReviewForm(!showReviewForm)}
               className="btn btn-secondary"
             >
-              {showReviewForm ? "Cancel" : "Write a Review"}
+              <span
+                className={`inline-block px-4 py-2 font-medium rounded-lg cursor-pointer
+    ${
+      showReviewForm
+        ? "bg-red-600 hover:bg-red-700 text-white"
+        : "bg-yellow-600 hover:bg-yellow-700 text-white"
+    }`}
+              >
+                {showReviewForm ? "Cancel" : "Write a Review"}
+              </span>
             </button>
           )}
         </div>
