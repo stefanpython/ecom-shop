@@ -56,12 +56,10 @@ const AdminPayments = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Payments</h1>
-      </div>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Payments</h1>
 
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="flex flex-col gap-3">
           <form onSubmit={handleSearch} className="flex">
             <input
               type="text"
@@ -91,7 +89,8 @@ const AdminPayments = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Desktop Table (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -230,6 +229,79 @@ const AdminPayments = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Cards (shown on mobile) */}
+      <div className="md:hidden space-y-4">
+        {filteredPayments.length === 0 ? (
+          <div className="text-center p-6 text-gray-500">No payments found</div>
+        ) : (
+          filteredPayments.map((payment) => (
+            <div
+              key={payment._id}
+              className="bg-white rounded-lg shadow-sm p-4"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <div className="font-medium">
+                    {payment.transactionId || "N/A"}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {payment.createdAt
+                      ? new Date(payment.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </div>
+                </div>
+                <Link
+                  to={`/admin/payments/${payment._id}`}
+                  className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                  title="View Details"
+                >
+                  <Eye className="h-5 w-5" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="font-medium">Customer:</span>{" "}
+                  {typeof payment.user === "object"
+                    ? payment.user.name
+                    : payment.user}
+                </div>
+                <div>
+                  <span className="font-medium">Amount:</span> $
+                  {payment.amount.toFixed(2)} {payment.currency}
+                </div>
+                <div>
+                  <span className="font-medium">Order:</span>{" "}
+                  {typeof payment.order === "object"
+                    ? `#${payment.order._id.slice(-8)}`
+                    : payment.order}
+                </div>
+                <div>
+                  <span className="font-medium">Method:</span>{" "}
+                  {payment.paymentMethod}
+                </div>
+                <div>
+                  <span className="font-medium">Status:</span>{" "}
+                  <span
+                    className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${
+                      payment.status === "Completed"
+                        ? "bg-green-100 text-green-800"
+                        : payment.status === "Failed"
+                        ? "bg-red-100 text-red-800"
+                        : payment.status === "Refunded"
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {payment.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
