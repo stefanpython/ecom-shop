@@ -9,7 +9,7 @@ const User = require("../models/userModel");
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const pageSize = 8;
+  const pageSize = 9;
   const page = Number(req.query.pageNumber) || 1;
 
   const keyword = req.query.keyword
