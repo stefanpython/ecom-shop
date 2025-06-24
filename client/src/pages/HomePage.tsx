@@ -174,7 +174,7 @@ const HomePage = () => {
           Shop by Category
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.slice(0, 4).map((category) => (
+          {categories.slice(0, 20).map((category) => (
             <motion.div
               key={category._id}
               whileHover={{ y: -5 }}
