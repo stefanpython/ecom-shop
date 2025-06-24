@@ -87,12 +87,10 @@ const AdminReviews = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Reviews</h1>
-      </div>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Reviews</h1>
 
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="flex flex-col gap-3">
           <form onSubmit={handleSearch} className="flex">
             <input
               type="text"
@@ -120,7 +118,8 @@ const AdminReviews = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Desktop Table (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -244,6 +243,77 @@ const AdminReviews = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Cards (shown on mobile) */}
+      <div className="md:hidden space-y-4">
+        {filteredReviews.length === 0 ? (
+          <div className="text-center p-6 text-gray-500">No reviews found</div>
+        ) : (
+          filteredReviews.map((review) => (
+            <div key={review._id} className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <div className="font-medium">{review.title}</div>
+                  <div className="text-sm text-gray-500">
+                    {typeof review.product === "object"
+                      ? review.product.name
+                      : `Product ID: ${review.product.slice(-8)}`}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-medium mr-1">
+                    {review.rating}
+                  </span>
+                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                </div>
+              </div>
+
+              <div className="text-sm text-gray-700 mb-3">{review.comment}</div>
+
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="font-medium">User:</span> {review.user?.name}
+                </div>
+                <div>
+                  <span className="font-medium">Date:</span>{" "}
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </div>
+                <div>
+                  <span className="font-medium">Status:</span>{" "}
+                  <span
+                    className={`ml-1 px-1.5 py-0.5 text-xs rounded-full ${
+                      review.isApproved
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {review.isApproved ? "Approved" : "Pending"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-3">
+                {!review.isApproved && (
+                  <button
+                    onClick={() => handleApprove(review._id)}
+                    className="p-1 text-green-600 hover:bg-green-50 rounded"
+                    title="Approve"
+                  >
+                    <CheckCircle className="h-5 w-5" />
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDelete(review._id)}
+                  className="p-1 text-red-600 hover:bg-red-50 rounded"
+                  title="Delete"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
