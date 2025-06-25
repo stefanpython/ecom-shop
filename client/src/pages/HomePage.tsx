@@ -252,7 +252,7 @@ const HomePage = () => {
             <input
               type="email"
               placeholder="Your email address"
-              className="flex-grow px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="flex-grow px-4 py-3 bg-white rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
             />
             <button className="px-6 py-3 bg-yellow-400 text-blue-800 font-semibold rounded-lg hover:bg-yellow-300 transition-colors">
               Subscribe
