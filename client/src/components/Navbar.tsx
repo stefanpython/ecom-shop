@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useState } from "react";
 import { ShoppingCart, User, Menu, X, LayoutDashboard } from "lucide-react";
+import logo from "../logo.svg";
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -25,7 +26,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             {/* Logo */}
-            <img src="/logo.svg" alt="Logo" className="h-10 w-10 mr-2" />
+            <img src={logo} alt="Logo" className="h-10 w-10 mr-2" />
             <Link to="/" className="text-2xl font-bold text-blue-600">
               ShopApp
             </Link>
