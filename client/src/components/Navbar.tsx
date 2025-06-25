@@ -26,7 +26,7 @@ const Navbar = () => {
           <div className="flex items-center">
             {/* Logo */}
             <img
-              src={`${import.meta.env.BASE_URL}logo.svg`}
+              src={`https://ecom-shop-production-377d.up.railway.app/logo.svg`}
               alt="Logo"
               className="h-10 w-10 mr-2"
             />
