@@ -4,6 +4,6 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/ecom-shop/",
+  base: "https://stefanpython.github.io/ecom-shop/",
   plugins: [react(), tailwindcss()],
 });
