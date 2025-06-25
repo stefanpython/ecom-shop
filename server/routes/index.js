@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.render("index", { title: "Shop API" });
+  res.send("API is running ✅");
 });
 
 // Add a simple ping endpoint for health checks
