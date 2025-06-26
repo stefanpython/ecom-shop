@@ -39,7 +39,10 @@ app.use(express.static(path.join(__dirname, "public")));
 // CORS
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "https://stefanpython.github.io",
+    origin:
+      process.env.CLIENT_URL ||
+      "https://stefanpython.github.io" ||
+      "http://localhost:5173",
     credentials: true,
   })
 );
